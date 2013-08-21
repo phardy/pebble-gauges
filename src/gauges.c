@@ -2,7 +2,14 @@
 #include "pebble_app.h"
 #include "pebble_fonts.h"
 
-#include "gauges.h"
+#define DIAL_RADIUS 70
+#define HAND_LENGTH 70
+#define INNER_RADIUS1 68
+#define INNER_RADIUS2 63
+#define MID_TICK_LENGTH 5
+#define BIG_TICK_LENGTH 10
+#define NUM_HOUR_TICKS 9
+#define NUM_MINUTE_TICKS 7
 
 #define MY_UUID { 0x52, 0x39, 0x16, 0x5D, 0x4D, 0x79, 0x4D, 0xEF, 0xA5, 0x5F, 0xB7, 0x93, 0x07, 0xD7, 0x4D, 0x29 }
 PBL_APP_INFO(MY_UUID,
@@ -33,10 +40,16 @@ void dial_layer_update(Layer *me, GContext *ctx) {
 
   // draw little ticks
   GPoint ray;
-  for (int x=0; x < 25; x++) {
+  int hour_ticks;
+  if (clock_is_24h_style()) {
+    hour_ticks = 24;
+  } else {
+    hour_ticks = 12;
+  }
+for (int x=0; x < (hour_ticks+1); x++) {
     // Every third line will be a big tick, so don't draw small
     if (x % 3 != 0) {
-      int32_t angle = TRIG_MAX_ANGLE / 48 * x;
+      int32_t angle = TRIG_MAX_ANGLE / (hour_ticks*2) * x;
       ray.y = (int16_t)(-cos_lookup(angle) *
 	      (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.y;
       ray.x = (int16_t)(sin_lookup(angle) *
@@ -61,8 +74,14 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   graphics_draw_circle(ctx, minute_centre, INNER_RADIUS2);
 
   // draw big ticks
-  for (int x=0; x < 9; x++) {
-    int32_t angle = TRIG_MAX_ANGLE / 16 * x;
+  int hour_bigticks;
+  if (clock_is_24h_style()) {
+    hour_bigticks = 8;
+  } else {
+    hour_bigticks = 4;
+  }
+  for (int x=0; x < (hour_bigticks+1); x++) {
+    int32_t angle = TRIG_MAX_ANGLE / (hour_bigticks*2) * x;
     ray.y = (int16_t)(-cos_lookup(angle) *
 	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.y;
     ray.x = (int16_t)(sin_lookup(angle) *
@@ -110,6 +129,15 @@ void time_layer_update(Layer *me, GContext *ctx) {
   // Draw hour hand
   GPoint hour_hand;
   int32_t hour_angle = TRIG_MAX_ANGLE / 48 * now.tm_hour;
+  if (clock_is_24h_style()) {
+    hour_angle = TRIG_MAX_ANGLE / 48 * now.tm_hour;
+  } else {
+    hour_angle = TRIG_MAX_ANGLE / 24 * (now.tm_hour % 12);
+    // 12 hour mode looks better if we use 12 instead of 0?
+    if (hour_angle == 0)
+      hour_angle = 12;
+  }
+
   hour_hand.y = (int16_t)(-cos_lookup(hour_angle) *
 		(int32_t)HAND_LENGTH / TRIG_MAX_RATIO) + hour_centre.y;
   hour_hand.x = (int16_t)(sin_lookup(hour_angle) *
