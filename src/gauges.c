@@ -55,13 +55,36 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   graphics_draw_circle(ctx, minute_centre, INNER_RADIUS2);
 
   // draw big ticks
-  graphics_context_set_fill_color(ctx, GColorBlack);
-  for (int x=0; x<NUM_HOUR_TICKS; x++) {
-    gpath_draw_filled(ctx, &hour_ticks[x]);
+  for (int x=0; x < 9; x++) {
+    int32_t angle = TRIG_MAX_ANGLE / 16 * x;
+    ray.y = (int16_t)(-cos_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.y;
+    ray.x = (int16_t)(sin_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.x;
+    graphics_draw_line(ctx, hour_centre, ray);
   }
-  for (int x=0; x<NUM_MINUTE_TICKS; x++) {
-    gpath_draw_filled(ctx, &minute_ticks[x]);
+  graphics_fill_circle(ctx, hour_centre, INNER_RADIUS2-8);
+
+  // minutes are done in two passes - small ticks for
+  // 5-min intervals, larger for 10.
+  for (int x=1; x < 13; x+=2) {
+    int32_t angle = TRIG_MAX_ANGLE / 24 * x;
+    ray.y = (int16_t)(-cos_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.y;
+    ray.x = (int16_t)(-sin_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.x;
+    graphics_draw_line(ctx, minute_centre, ray);
   }
+  graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2-4);
+  for (int x=0; x < 13; x+=2) {
+    int32_t angle = TRIG_MAX_ANGLE / 24 * x;
+    ray.y = (int16_t)(-cos_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.y;
+    ray.x = (int16_t)(-sin_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.x;
+    graphics_draw_line(ctx, minute_centre, ray);
+  }
+  graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2-8);
 
   // centres
   graphics_context_set_fill_color(ctx, GColorBlack);
@@ -109,18 +132,6 @@ void handle_init(AppContextRef ctx) {
   hour_centre = GPoint(2, 72);
   minute_centre = GPoint(142, 96);
 
-  // init big ticks
-  for (int x=0; x<NUM_HOUR_TICKS; x++) {
-    gpath_init(&hour_ticks[x], &BIG_TICK);
-    gpath_move_to(&hour_ticks[x], hour_centre);
-    gpath_rotate_to(&hour_ticks[x], (TRIG_MAX_ANGLE/2)/(NUM_HOUR_TICKS)*x);
-  }
-  for (int x=0; x<NUM_MINUTE_TICKS; x++) {
-    gpath_init(&minute_ticks[x], &BIG_TICK);
-    gpath_move_to(&minute_ticks[x], minute_centre);
-    gpath_rotate_to(&minute_ticks[x],
-		    TRIG_MAX_ANGLE-((TRIG_MAX_ANGLE/2)/(NUM_MINUTE_TICKS)*x));
-  }
   window_init(&window, "Root window");
   window_stack_push(&window, true /* Animated */);
 
