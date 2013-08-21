@@ -3,7 +3,9 @@
 #include "pebble_fonts.h"
 
 #define DIAL_RADIUS 70
-#define HAND_LENGTH 69
+#define HAND_LENGTH 70
+#define INNER_RADIUS1 68
+#define INNER_RADIUS2 63
 
 #define MY_UUID { 0x52, 0x39, 0x16, 0x5D, 0x4D, 0x79, 0x4D, 0xEF, 0xA5, 0x5F, 0xB7, 0x93, 0x07, 0xD7, 0x4D, 0x29 }
 PBL_APP_INFO(MY_UUID,
@@ -25,15 +27,37 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_fill_circle(ctx, hour_centre, DIAL_RADIUS);
   graphics_fill_circle(ctx, minute_centre, DIAL_RADIUS);
+
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  graphics_draw_circle(ctx, hour_centre, INNER_RADIUS1);
+  graphics_draw_circle(ctx, minute_centre, INNER_RADIUS1);
+
+  GPoint ray;
+  for (int x=0; x < 25; x++) {
+    int32_t angle = TRIG_MAX_ANGLE / 48 * x;
+    ray.y = (int16_t)(-cos_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.y;
+    ray.x = (int16_t)(sin_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.x;
+    graphics_draw_line(ctx, hour_centre, ray);
+  }
+  for (int x=0; x< 61; x++) {
+    int32_t angle = TRIG_MAX_ANGLE / 120 * x;
+    ray.y = (int16_t)(-cos_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.y;
+    ray.x = (int16_t)(-sin_lookup(angle) *
+	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.x;
+    graphics_draw_line(ctx, minute_centre, ray);
+  }
+
+  graphics_fill_circle(ctx, hour_centre, INNER_RADIUS2);
+  graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2);
+  graphics_draw_circle(ctx, hour_centre, INNER_RADIUS2);
+  graphics_draw_circle(ctx, minute_centre, INNER_RADIUS2);
   // centres
   graphics_context_set_fill_color(ctx, GColorBlack);
   graphics_fill_circle(ctx, hour_centre, 4);
   graphics_fill_circle(ctx, minute_centre, 4);
-
-  // Start of dial markings
-  graphics_context_set_stroke_color(ctx, GColorBlack);
-  graphics_draw_circle(ctx, hour_centre, DIAL_RADIUS-5);
-  graphics_draw_circle(ctx, minute_centre, DIAL_RADIUS-5);
 }
 
 void time_layer_update(Layer *me, GContext *ctx) {
