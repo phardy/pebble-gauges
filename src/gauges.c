@@ -34,20 +34,26 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   // draw little ticks
   GPoint ray;
   for (int x=0; x < 25; x++) {
-    int32_t angle = TRIG_MAX_ANGLE / 48 * x;
-    ray.y = (int16_t)(-cos_lookup(angle) *
-	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.y;
-    ray.x = (int16_t)(sin_lookup(angle) *
-	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.x;
-    graphics_draw_line(ctx, hour_centre, ray);
+    // Every third line will be a big tick, so don't draw small
+    if (x % 3 != 0) {
+      int32_t angle = TRIG_MAX_ANGLE / 48 * x;
+      ray.y = (int16_t)(-cos_lookup(angle) *
+	      (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.y;
+      ray.x = (int16_t)(sin_lookup(angle) *
+	      (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.x;
+      graphics_draw_line(ctx, hour_centre, ray);
+    }
   }
   for (int x=0; x< 61; x++) {
-    int32_t angle = TRIG_MAX_ANGLE / 120 * x;
-    ray.y = (int16_t)(-cos_lookup(angle) *
-	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.y;
-    ray.x = (int16_t)(-sin_lookup(angle) *
-	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.x;
-    graphics_draw_line(ctx, minute_centre, ray);
+    // Every fifth will be a bigger tick, so don't draw small
+    if (x % 5 != 0) {
+      int32_t angle = TRIG_MAX_ANGLE / 120 * x;
+      ray.y = (int16_t)(-cos_lookup(angle) *
+	      (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.y;
+      ray.x = (int16_t)(-sin_lookup(angle) *
+	       (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.x;
+      graphics_draw_line(ctx, minute_centre, ray);
+    }
   }
   graphics_fill_circle(ctx, hour_centre, INNER_RADIUS2);
   graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2);
@@ -63,7 +69,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
 	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + hour_centre.x;
     graphics_draw_line(ctx, hour_centre, ray);
   }
-  graphics_fill_circle(ctx, hour_centre, INNER_RADIUS2-8);
+  graphics_fill_circle(ctx, hour_centre, INNER_RADIUS2-BIG_TICK_LENGTH);
 
   // minutes are done in two passes - small ticks for
   // 5-min intervals, larger for 10.
@@ -75,7 +81,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
 	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.x;
     graphics_draw_line(ctx, minute_centre, ray);
   }
-  graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2-4);
+  graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2-MID_TICK_LENGTH);
   for (int x=0; x < 13; x+=2) {
     int32_t angle = TRIG_MAX_ANGLE / 24 * x;
     ray.y = (int16_t)(-cos_lookup(angle) *
@@ -84,7 +90,7 @@ void dial_layer_update(Layer *me, GContext *ctx) {
 	    (int32_t)INNER_RADIUS1 / TRIG_MAX_RATIO) + minute_centre.x;
     graphics_draw_line(ctx, minute_centre, ray);
   }
-  graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2-8);
+  graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2-BIG_TICK_LENGTH);
 
   // centres
   graphics_context_set_fill_color(ctx, GColorBlack);
