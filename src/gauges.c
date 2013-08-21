@@ -15,7 +15,7 @@
 PBL_APP_INFO(MY_UUID,
              "Gauges", "Kids, Inc.",
              0, 1, /* App version */
-             DEFAULT_MENU_ICON,
+             RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_WATCH_FACE);
 
 Window window;
