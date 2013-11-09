@@ -168,12 +168,28 @@ void bluetooth_connection_handler(bool connected) {
   vibes_double_pulse();
 }
 
+void battery_status_handler(BatteryChargeState charge) {
+  if (!charge.is_charging && !charge.is_plugged && charge.charge_percent < 5) {
+    vibes_double_pulse();
+  }
+}
+
 void btdisco_config_update() {
   if (persist_exists(CONFIG_KEY_BTDISCO)) {
     if (persist_read_bool(CONFIG_KEY_BTDISCO)) {
       bluetooth_connection_service_subscribe(bluetooth_connection_handler);
     } else {
       bluetooth_connection_service_unsubscribe();
+    }
+  }
+}
+
+void lowbat_config_handler() {
+  if (persist_exists(CONFIG_KEY_LOWBAT)) {
+    if (persist_read_bool(CONFIG_KEY_BTDISCO)) {
+      battery_state_service_subscribe(battery_status_handler);
+    } else {
+      battery_state_service_unsubscribe();
     }
   }
 }
