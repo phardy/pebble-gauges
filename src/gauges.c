@@ -158,7 +158,22 @@ void handle_tick(struct tm *now, TimeUnits units_changed) {
   layer_mark_dirty(time_layer);
 }
 
+void in_received_handler(DictionaryIterator *received, void *context) {
+  // stub!
+}
+
+void in_dropped_handler(AppMessageResult reason, void *context) {
+  // stub!
+}
+
 void handle_init() {
+  app_message_register_inbox_received(in_received_handler);
+  app_message_register_inbox_dropped(in_dropped_handler);
+
+  const uint32_t inbound_size = 64;
+  const uint32_t outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
+
   hour_centre = GPoint(2, 72);
   minute_centre = GPoint(142, 96);
 

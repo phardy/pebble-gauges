@@ -1,5 +1,13 @@
 var initialised = false;
 
+function appMessageAck(e) {
+    console.log("options sent to Pebble successfully");
+}
+
+function appMessageNack(e) {
+    console.log("options not sent to Pebble: " + e.error.message);
+}
+
 Pebble.addEventListener("ready", function() {
     initialized = true;
 });
@@ -18,6 +26,12 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	var options = JSON.parse(decodeURIComponent(e.response));
 	console.log("storing options: " + JSON.stringify(options));
 	window.localStorage.setItem('options', JSON.stringify(options));
+	console.log("sending btdisco");
+	Pebble.sendAppMessage({"btdisco": options["btdisco"]},
+			     appMessageAck, appMessageNack);
+	console.log("sending lowbat");
+	Pebble.sendAppMessage({"lowbat": options["lowbat"]},
+			     appMessageAck, appMessageNack);
     } else {
 	console.log("no options received");
     }

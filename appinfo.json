@@ -9,7 +9,10 @@
   "watchapp": {
     "watchface": true
   },
-  "appKeys": {},
+  "appKeys": {
+    "btdisco": 0,
+    "lowbat": 1
+  },
   "resources": {
     "media": [
       {
