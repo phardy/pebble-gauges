@@ -183,16 +183,16 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   Tuple *lowbat_tuple = dict_find(received, CONFIG_KEY_LOWBAT);
 
   if (btdisco_tuple) {
-    if (strcmp(btdisco_tuple->value->cstring, "on")) {
+    if (strcmp(btdisco_tuple->value->cstring, "on") == 0) {
       vibes_double_pulse();
       persist_write_bool(CONFIG_KEY_BTDISCO, true);
     } else {
-      btdisco_config_update();
+      persist_write_bool(CONFIG_KEY_BTDISCO, false);
     }
     btdisco_config_update();
   }
   if (lowbat_tuple) {
-    if (strcmp(lowbat_tuple->value->cstring, "on")) {
+    if (strcmp(lowbat_tuple->value->cstring, "on") == 0) {
       persist_write_bool(CONFIG_KEY_LOWBAT, true);
     } else {
       persist_write_bool(CONFIG_KEY_LOWBAT, false);
