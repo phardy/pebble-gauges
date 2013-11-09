@@ -37,7 +37,8 @@ void dial_layer_update(Layer *me, GContext *ctx) {
   } else {
     hour_ticks = 12;
   }
-for (int x=0; x < (hour_ticks+1); x++) {
+  // draw hour dial rays
+  for (int x=0; x < (hour_ticks+1); x++) {
     // Every third line will be a big tick, so don't draw small
     if (x % 3 != 0) {
       int32_t angle = TRIG_MAX_ANGLE / (hour_ticks*2) * x;
@@ -48,6 +49,7 @@ for (int x=0; x < (hour_ticks+1); x++) {
       graphics_draw_line(ctx, hour_centre, ray);
     }
   }
+  // draw minute dial rays
   for (int x=0; x< 61; x++) {
     // Every fifth will be a bigger tick, so don't draw small
     if (x % 5 != 0) {
@@ -59,6 +61,7 @@ for (int x=0; x < (hour_ticks+1); x++) {
       graphics_draw_line(ctx, minute_centre, ray);
     }
   }
+  // draw background-coloured circles over the rays, creating tick markers
   graphics_fill_circle(ctx, hour_centre, INNER_RADIUS2);
   graphics_fill_circle(ctx, minute_centre, INNER_RADIUS2);
   graphics_draw_circle(ctx, hour_centre, INNER_RADIUS2);
@@ -71,6 +74,7 @@ for (int x=0; x < (hour_ticks+1); x++) {
   } else {
     hour_bigticks = 4;
   }
+  // draw hour dial rays
   for (int x=0; x < (hour_bigticks+1); x++) {
     int32_t angle = TRIG_MAX_ANGLE / (hour_bigticks*2) * x;
     ray.y = (int16_t)(-cos_lookup(angle) *
