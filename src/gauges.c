@@ -16,6 +16,12 @@ GPoint hour_centre, minute_centre;
 GPath hour_ticks[NUM_HOUR_TICKS];
 GPath minute_ticks[NUM_MINUTE_TICKS];
 
+// Possible messages received from the config page
+enum {
+  CONFIG_KEY_BTDISCO = 0x0,
+  CONFIG_KEY_LOWBAT = 0x1,
+};
+
 void dial_layer_update(Layer *me, GContext *ctx) {
   // background
   graphics_context_set_fill_color(ctx, GColorBlack);
@@ -158,8 +164,39 @@ void handle_tick(struct tm *now, TimeUnits units_changed) {
   layer_mark_dirty(time_layer);
 }
 
+void bluetooth_connection_handler(bool connected) {
+  vibes_double_pulse();
+}
+
+void btdisco_config_update() {
+  if (persist_read_bool(CONFIG_KEY_BTDISCO)) {
+    bluetooth_connection_service_subscribe(bluetooth_connection_handler);
+  } else {
+    bluetooth_connection_service_unsubscribe();
+  }
+  // bluetooth_connection_service_subscribe(bluetooth_connection_handler);
+}
+
 void in_received_handler(DictionaryIterator *received, void *context) {
-  // stub!
+  Tuple *btdisco_tuple = dict_find(received, CONFIG_KEY_BTDISCO);
+  Tuple *lowbat_tuple = dict_find(received, CONFIG_KEY_LOWBAT);
+
+  if (btdisco_tuple) {
+    vibes_double_pulse();
+    if (strcmp(btdisco_tuple->value->cstring, "on")) {
+      btdisco_config_update(true);
+    } else {
+      btdisco_config_update(false);
+    }
+  }
+  if (lowbat_tuple) {
+    if (strcmp(lowbat_tuple->value->cstring, "on")) {
+      persist_write_bool(CONFIG_KEY_LOWBAT, true);
+    } else {
+      persist_write_bool(CONFIG_KEY_LOWBAT, false);
+    }
+    // call low battery update function here
+  }
 }
 
 void in_dropped_handler(AppMessageResult reason, void *context) {
@@ -193,6 +230,7 @@ void handle_init() {
   window_stack_push(window, true /* Animated */);
 
   tick_timer_service_subscribe(MINUTE_UNIT, handle_tick);
+  btdisco_config_update();
 }
 
 void handle_deinit() {
