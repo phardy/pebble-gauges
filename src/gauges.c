@@ -169,12 +169,13 @@ void bluetooth_connection_handler(bool connected) {
 }
 
 void btdisco_config_update() {
-  if (persist_read_bool(CONFIG_KEY_BTDISCO)) {
-    bluetooth_connection_service_subscribe(bluetooth_connection_handler);
-  } else {
-    bluetooth_connection_service_unsubscribe();
+  if (persist_exists(CONFIG_KEY_BTDISCO)) {
+    if (persist_read_bool(CONFIG_KEY_BTDISCO)) {
+      bluetooth_connection_service_subscribe(bluetooth_connection_handler);
+    } else {
+      bluetooth_connection_service_unsubscribe();
+    }
   }
-  // bluetooth_connection_service_subscribe(bluetooth_connection_handler);
 }
 
 void in_received_handler(DictionaryIterator *received, void *context) {
@@ -182,12 +183,13 @@ void in_received_handler(DictionaryIterator *received, void *context) {
   Tuple *lowbat_tuple = dict_find(received, CONFIG_KEY_LOWBAT);
 
   if (btdisco_tuple) {
-    vibes_double_pulse();
     if (strcmp(btdisco_tuple->value->cstring, "on")) {
-      btdisco_config_update(true);
+      vibes_double_pulse();
+      persist_write_bool(CONFIG_KEY_BTDISCO, true);
     } else {
-      btdisco_config_update(false);
+      btdisco_config_update();
     }
+    btdisco_config_update();
   }
   if (lowbat_tuple) {
     if (strcmp(lowbat_tuple->value->cstring, "on")) {

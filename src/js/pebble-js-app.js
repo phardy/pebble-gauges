@@ -26,12 +26,7 @@ Pebble.addEventListener("webviewclosed", function(e) {
 	var options = JSON.parse(decodeURIComponent(e.response));
 	console.log("storing options: " + JSON.stringify(options));
 	window.localStorage.setItem('options', JSON.stringify(options));
-	console.log("sending btdisco");
-	Pebble.sendAppMessage({"btdisco": options["btdisco"]},
-			     appMessageAck, appMessageNack);
-	console.log("sending lowbat");
-	Pebble.sendAppMessage({"lowbat": options["lowbat"]},
-			     appMessageAck, appMessageNack);
+	Pebble.sendAppMessage(options, appMessageAck, appMessageNack);
     } else {
 	console.log("no options received");
     }

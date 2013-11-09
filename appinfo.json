@@ -10,8 +10,8 @@
     "watchface": true
   },
   "appKeys": {
-    "btdisco": 0,
-    "lowbat": 1
+    "btdisco-notif": 0,
+    "lowbat-notif": 1
   },
   "resources": {
     "media": [
