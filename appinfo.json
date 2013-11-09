@@ -1,0 +1,22 @@
+{
+  "uuid": "5239165d-4d79-4def-a55f-b79307d74d29",
+  "shortName": "Gauges",
+  "longName": "Gauges",
+  "companyName": "Kids, Inc.",
+  "versionCode": 2,
+  "versionLabel": "2.0.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {},
+  "resources": {
+    "media": [
+      {
+        "menuIcon": true,
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/appicon.png"
+      }
+    ]
+  }
+}
