@@ -4,7 +4,8 @@
   "longName": "Gauges",
   "companyName": "Kids, Inc.",
   "versionCode": 2,
-  "versionLabel": "2.0.0",
+  "versionLabel": "2.1.0",
+  "capabilities": [ "configurable" ],
   "watchapp": {
     "watchface": true
   },
