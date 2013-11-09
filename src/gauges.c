@@ -200,7 +200,6 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 
   if (btdisco_tuple) {
     if (strcmp(btdisco_tuple->value->cstring, "on") == 0) {
-      vibes_double_pulse();
       persist_write_bool(CONFIG_KEY_BTDISCO, true);
     } else {
       persist_write_bool(CONFIG_KEY_BTDISCO, false);
