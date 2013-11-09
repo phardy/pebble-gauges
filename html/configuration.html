@@ -40,6 +40,24 @@
       </div>
     </div>
     <script>
+      <!-- from http://snipplr.com/view/26662/get-url-parameters-with-jquery--improved/ -->
+      $.urlParam = function(name){
+	var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(window.location.href);
+	if (!results) { return 0; }
+	return results[1] || 0;
+      }
+
+      function updateControls() {
+        var btdisconotif = decodeURIComponent($.urlParam("btdisco-notif"));
+        var lowbatnotif = decodeURIComponent($.urlParam("lowbat-notif"));
+        if (btdisconotif != '') {
+          $("#btdisco-notif").val(btdisconotif).slider("refresh");
+        }
+        if (lowbatnotif != '') {
+          $("#lowbat-notif").val(lowbatnotif).slider("refresh");
+        }
+      }
+
       function saveOptions() {
         var options = {
           'btdisco-notif': $("#btdisco-notif").val(),
@@ -62,6 +80,8 @@
           document.location = location;
         });
       });
+
+      $('#page1').bind('pageinit', updateControls);
     </script>
   </body>
 </html>
