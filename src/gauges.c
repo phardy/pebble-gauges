@@ -159,7 +159,9 @@ void handle_init() {
   minute_centre = GPoint(142, 96);
 
   window = window_create();
-  GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
+  // Getting the bounds seems to result in a 144x144 window. Bad.
+  // GRect window_bounds = layer_get_bounds(window_get_root_layer(window));
+  GRect window_bounds = GRect(0, 0, 144, 168);
   dial_layer = layer_create(window_bounds);
   time_layer = layer_create(window_bounds);
 
