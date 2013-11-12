@@ -9,7 +9,7 @@ function appMessageNack(e) {
 }
 
 Pebble.addEventListener("ready", function() {
-    initialized = true;
+    initialised = true;
 });
 
 Pebble.addEventListener("showConfiguration", function() {
