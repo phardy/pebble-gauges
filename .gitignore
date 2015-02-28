@@ -4,4 +4,3 @@ build
 .lock-waf*
 
 # Ignore build files
-wscript
