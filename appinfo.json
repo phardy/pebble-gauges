@@ -3,8 +3,12 @@
   "shortName": "Gauges",
   "longName": "Gauges",
   "companyName": "Kids, Inc.",
-  "versionCode": 2,
-  "versionLabel": "2.0.0",
+  "versionCode": 3,
+  "versionLabel": "3.0",
+  "targetPlatforms": [
+    "aplite",
+    "basalt"
+  ],
   "watchapp": {
     "watchface": true
   },
@@ -18,5 +22,6 @@
         "file": "images/appicon.png"
       }
     ]
-  }
+  },
+  "sdkVersion": "3"
 }
