@@ -18,14 +18,22 @@ GPath minute_ticks[NUM_MINUTE_TICKS];
 
 void dial_layer_update(Layer *me, GContext *ctx) {
   // background
+#ifdef PBL_COLOR
+  graphics_context_set_fill_color(ctx, GColorBlue);
+#else
   graphics_context_set_fill_color(ctx, GColorBlack);
+#endif
   graphics_fill_rect(ctx, layer_get_bounds(me), 0, GCornerNone);
   // dials
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_fill_circle(ctx, hour_centre, DIAL_RADIUS);
   graphics_fill_circle(ctx, minute_centre, DIAL_RADIUS);
 
+#ifdef PBL_COLOR
+  graphics_context_set_stroke_color(ctx, GColorRed);
+#else
   graphics_context_set_stroke_color(ctx, GColorBlack);
+#endif
   graphics_draw_circle(ctx, hour_centre, INNER_RADIUS1);
   graphics_draw_circle(ctx, minute_centre, INNER_RADIUS1);
 
